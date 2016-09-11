@@ -1,4 +1,12 @@
-REST WEB API Use http://localhost:8080
+###REST WEB API
+
+Run the app
+
+```bash
+mvn clean jetty:run
+```
+
+Use http://localhost:8080
 
 1 Creating an account
 	PUT /account?currency=rub

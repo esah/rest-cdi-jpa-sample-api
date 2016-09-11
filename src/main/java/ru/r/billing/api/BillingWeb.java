@@ -1,6 +1,7 @@
 package ru.r.billing.api;
 
 import java.util.Collection;
+import java.util.Currency;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.ws.rs.Consumes;
@@ -23,8 +24,8 @@ public class BillingWeb {
 	private AccountService accountService;
 
 	@GET
-	public String hello() {
-		return accountService.name();
+	public Object hello() {
+		return new Account(1, Currency.getInstance("RUB"));
 	}
 
 	private Account account;

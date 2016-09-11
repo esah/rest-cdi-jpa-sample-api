@@ -1,9 +1,17 @@
 package ru.r.billing.model;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Currency;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import ru.r.billing.ex.NotEnoughMoneyException;
 
+@XmlRootElement(name = "account")
+@XmlAccessorType(XmlAccessType.FIELD)
 public class Account {
 
 	private long number;
@@ -15,6 +23,13 @@ public class Account {
 	//batch size=10, lazy=true //where
 	private Collection<Operation> history; //last 3 month history
 
+	private Account() {
+	}
+
+	public Account(long number, Currency c) {
+		this.number = number;
+		this.balance = new Money(BigDecimal.ZERO, c);
+	}
 
 	private void hasEnough(Money money) {
 		if (balance.isLess(money)) {

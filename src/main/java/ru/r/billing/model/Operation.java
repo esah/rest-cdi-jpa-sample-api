@@ -15,6 +15,9 @@ public class Operation {
 	private ZonedDateTime time;
 	private String desc;
 
+	private Operation() {
+	}
+
 	public Operation(Account account, Money amount, Type type, Money balance,
 			ZonedDateTime time) {
 		this.account = account;
