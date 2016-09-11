@@ -35,14 +35,11 @@
             <scope>runtime</scope>
         </dependency>
 
-        <dependency>
-          <groupId>javax.persistence</groupId>
-          <artifactId>persistence-api</artifactId>
-          <version>1.0.2</version>
-<!--
-          <scope>provided</scope>
--->
-        </dependency>
+     <!--   <dependency>
+            <groupId>javax.transaction</groupId>
+            <artifactId>javax.transaction-api</artifactId>
+            <version>1.2</version>
+        </dependency>-->
         <dependency>
             <groupId>org.apache.deltaspike.core</groupId>
             <artifactId>deltaspike-core-api</artifactId>
@@ -63,6 +60,21 @@
             <artifactId>deltaspike-jpa-module-impl</artifactId>
             <scope>runtime</scope>
         </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-core</artifactId>
+            <version>5.0.0.Final</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-entitymanager</artifactId>
+            <version>5.0.0.Final</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-java8</artifactId>
+            <version>5.0.0.Final</version>
+        </dependency>
 
         <dependency>
             <groupId>com.sun.jersey</groupId>
@@ -82,6 +94,12 @@
             <scope>runtime</scope>
         </dependency>
 
+        <dependency>
+            <groupId>javax.annotation</groupId>
+            <artifactId>javax.annotation-api</artifactId>
+            <version>1.2</version>
+            <scope>provided</scope>
+        </dependency>
         <dependency>
             <groupId>javax.inject</groupId>
             <artifactId>javax.inject</artifactId>
@@ -119,6 +137,22 @@
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-maven-plugin</artifactId>
                 <version>${jetty.version}</version>
+                <dependencies>
+
+                    <dependency>
+                        <groupId>org.hsqldb</groupId>
+                        <artifactId>hsqldb</artifactId>
+                        <version>2.3.4</version>
+                        <scope>runtime</scope>
+                    </dependency>
+                    <dependency>
+                        <groupId>c3p0</groupId>
+                        <artifactId>c3p0</artifactId>
+                        <version>0.9.1.2</version>
+                        <scope>runtime</scope>
+                    </dependency>
+
+                </dependencies>
                 <configuration>
                     <scanIntervalSeconds>5</scanIntervalSeconds>
                     <webApp>

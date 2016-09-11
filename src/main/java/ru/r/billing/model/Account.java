@@ -4,24 +4,50 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Currency;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.persistence.Version;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.Where;
 import ru.r.billing.ex.NotEnoughMoneyException;
 
 @XmlRootElement(name = "account")
 @XmlAccessorType(XmlAccessType.FIELD)
+@Entity
+@Table(name = "account")
 public class Account {
 
-	private long number;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY) //for simplicity
+	@Column(name = "number")
+	private Long number;
 
 	//private Customer customer;
 
+	@Embedded
 	private Money balance;
 
-	//batch size=10, lazy=true //where
-	private Collection<Operation> history; //last 3 month history
+	@BatchSize(size = 10)
+	@OneToMany(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true)
+	@Where(clause = "time >= CURRENT_DATE - '3' MONTH") //last 3 month history
+	private Collection<Operation> history;
+
+	@Column(name = "version_", nullable = false)
+	@Version
+	private int version;
 
 	private Account() {
 	}
@@ -54,7 +80,7 @@ public class Account {
 		return Operation.credit(this, amount);
 	}
 
-	public long getNumber() {
+	public Long getNumber() {
 		return number;
 	}
 

@@ -1,12 +1,16 @@
 package ru.r.billing.model;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Currency;
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.hibernate.annotations.Type;
 import ru.r.billing.ex.DifferentCurrencyException;
 import ru.r.billing.jaxb.CurrencyAdapter;
 
@@ -15,9 +19,14 @@ import ru.r.billing.jaxb.CurrencyAdapter;
  */
 @XmlRootElement(name = "money")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class Money {
+@Embeddable
+public class Money implements Comparable<Money>, Serializable {
+	@Column(name = "amount", precision = 15, scale = 2, nullable = false)
 	private /*final*/ BigDecimal amount;
+
 	@XmlJavaTypeAdapter(CurrencyAdapter.class)
+	@Column(name = "currency", nullable = false)
+/*	@Type(type = "org.hibernate.type.CurrencyType")*/
 	private /*final*/ Currency currency;
 
 	private Money() {
@@ -59,5 +68,11 @@ public class Money {
 	public boolean isLess(Money money) {
 		theSameCurrency(money);
 		return amount.compareTo(money.getAmount()) < 0;
+	}
+
+	@Override
+	public int compareTo(Money o) {
+		final int i = currency.getCurrencyCode().compareTo(o.getCurrency().getCurrencyCode());
+		return i != 0 ? 0 : amount.compareTo(o.getAmount());
 	}
 }

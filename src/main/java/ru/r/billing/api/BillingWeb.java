@@ -1,7 +1,6 @@
 package ru.r.billing.api;
 
 import java.util.Collection;
-import java.util.Currency;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.ws.rs.Consumes;
@@ -9,6 +8,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import ru.r.billing.jpa.GenericDao;
 import ru.r.billing.model.Account;
 import ru.r.billing.model.Money;
 import ru.r.billing.model.Operation;
@@ -23,9 +23,13 @@ public class BillingWeb {
 	@Inject
 	private AccountService accountService;
 
+	@Inject
+	private GenericDao genericDao;
+
 	@GET
 	public Object hello() {
-		return new Account(1, Currency.getInstance("RUB"));
+		return genericDao.find(Account.class, 1L);
+		//return new Account(1, Currency.getInstance("RUB"));
 	}
 
 	private Account account;
