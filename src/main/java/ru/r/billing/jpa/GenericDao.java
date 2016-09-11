@@ -15,9 +15,13 @@ public class GenericDao {
 	private EntityManager em;
 
 
-	@Transactional
-	public<T> T find(Class<T> entityClass, Serializable id) {
+	public <T> T find(Class<T> entityClass, Serializable id) {
 		return em.find(entityClass, id);
+	}
+
+	@Transactional
+	public <T> T saveOrUpdate(T entity) {
+		return em.merge(entity);
 	}
 
 }

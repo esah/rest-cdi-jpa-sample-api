@@ -15,9 +15,17 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import ru.r.billing.jaxb.ZonedDateTimeXmlAdapter;
 
 @Entity
 @Table(name = "operation")
+@XmlRootElement(name = "operation")
+@XmlAccessorType(XmlAccessType.FIELD)
 public class Operation {
 	public static enum Type {
 		DEBIT,
@@ -27,10 +35,12 @@ public class Operation {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id")
+	@XmlTransient
 	private Long id;
 
 	@ManyToOne(optional = false, fetch = FetchType.LAZY)
 	@JoinColumn(name = "account_id")
+	@XmlTransient
 	private Account account;
 
 	@Embedded
@@ -48,6 +58,7 @@ public class Operation {
 	private Money balance;
 
 	@Column(name = "time", nullable = false)
+	@XmlJavaTypeAdapter(ZonedDateTimeXmlAdapter.class)
 	private ZonedDateTime time;
 
 	@Column(name = "desc")

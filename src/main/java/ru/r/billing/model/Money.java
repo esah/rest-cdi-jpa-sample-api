@@ -7,12 +7,10 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import org.hibernate.annotations.Type;
 import ru.r.billing.ex.DifferentCurrencyException;
-import ru.r.billing.jaxb.CurrencyAdapter;
+import ru.r.billing.jaxb.CurrencyXmlAdapter;
 
 /**
  * Immutable
@@ -24,7 +22,7 @@ public class Money implements Comparable<Money>, Serializable {
 	@Column(name = "amount", precision = 15, scale = 2, nullable = false)
 	private /*final*/ BigDecimal amount;
 
-	@XmlJavaTypeAdapter(CurrencyAdapter.class)
+	@XmlJavaTypeAdapter(CurrencyXmlAdapter.class)
 	@Column(name = "currency", nullable = false)
 /*	@Type(type = "org.hibernate.type.CurrencyType")*/
 	private /*final*/ Currency currency;
