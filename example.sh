@@ -1,11 +1,19 @@
-curl -v -X PUT 'http://localhost:8080/api/account/1'
-curl -v -X PUT 'http://localhost:8080/api/account/2'
-curl -v -X PUT 'http://localhost:8080/api/account/3?currency=USD'
+echo -e "Creating Account 1 with RUB currency: "
+curl -f -X PUT 'http://localhost:8080/api/account/1?currency=RUB' || exit 1
 
-curl -v -X PUT 'http://localhost:8080/api/account/1/100.2/RUB'
-curl -v -X PUT 'http://localhost:8080/api/account/1/500/RUB'
-curl -v -X DELETE 'http://localhost:8080/api/account/1/50/RUB'
+echo -e "\n\nCreating Account 2 with RUB currency: "
+curl -f -X PUT 'http://localhost:8080/api/account/2?currency=RUB'  || exit 1
 
-curl -v -X GET  'http://localhost:8080/api/account/1'
+echo -e "\n\nAdding 100 RUB to Account 1: "
+curl -f -f -X PUT 'http://localhost:8080/api/account/1/100/RUB' || exit 1
 
-curl -v -X POST 'http://localhost:8080/api/account/1/transfer/2?amount=10.50&currency=RUB'
+echo -e "\n\nTransferring 20 RUB from Account 1 to Account 2: "
+curl -f -X POST 'http://localhost:8080/api/account/1/transfer/2?amount=20&currency=RUB' || exit 1
+
+echo -e "\n\nAccount 1 balance 80: "
+curl -f -X GET 'http://localhost:8080/api/account/1' || exit 1
+
+echo -e "\n\nAccount 2 balance 20: "
+curl -f -X GET 'http://localhost:8080/api/account/2' || exit 1
+
+echo -e "\n\nOK"
