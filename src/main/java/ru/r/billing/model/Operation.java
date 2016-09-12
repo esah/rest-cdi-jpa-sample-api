@@ -12,6 +12,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -23,7 +24,9 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import ru.r.billing.jaxb.ZonedDateTimeXmlAdapter;
 
 @Entity
-@Table(name = "operation")
+@Table(name = "operation",
+		indexes = @Index(columnList = "time")
+)
 @XmlRootElement(name = "operation")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Operation {
