@@ -39,7 +39,6 @@ public class BillingWeb {
 	@GET
 	@Path("account/{id}")
 	public Account getAccount(@PathParam("id") long id) {
-		//return genericDao.find(Account.class, id); //fetch getHistory()
 		return accountService.getAccountWithHistory(id);
 	}
 
@@ -48,7 +47,6 @@ public class BillingWeb {
 	public Account createAccount(
 			@PathParam("id") long id,
 			@DefaultValue("RUB") @QueryParam("currency") String currencyCode) {
-
 		if (genericDao.find(Account.class, id) != null) {
 			throw new WebApplicationException(Response.Status.CONFLICT);
 		}
@@ -62,13 +60,7 @@ public class BillingWeb {
 			@PathParam("id") long id,
 			@PathParam("amount") BigDecimal amount,
 			@PathParam("currency") String currencyCode) {
-
-		final Money money = toMoney(amount, currencyCode);
-		try {
-			return accountService.deposit(id, money);
-		} catch (DifferentCurrencyException e) {
-			throw new WebApplicationException(e, Response.Status.PRECONDITION_FAILED);
-		}
+		return accountService.deposit(id, toMoney(amount, currencyCode));
 	}
 
 	@DELETE
@@ -77,13 +69,7 @@ public class BillingWeb {
 			@PathParam("id") long id,
 			@PathParam("amount") BigDecimal amount,
 			@PathParam("currency") String currencyCode) {
-
-		final Money money = toMoney(amount, currencyCode);
-		try {
-			return accountService.withdraw(id, money);
-		} catch (NotEnoughMoneyException | DifferentCurrencyException e) {
-			throw new WebApplicationException(e, Response.Status.PRECONDITION_FAILED);
-		}
+		return accountService.withdraw(id, toMoney(amount, currencyCode));
 	}
 
 	@POST
@@ -93,24 +79,13 @@ public class BillingWeb {
 			@PathParam("id2") long id2,
 			@QueryParam("amount") BigDecimal amount,
 			@QueryParam("currency") String currencyCode) {
-
-		final Money money = toMoney(amount, currencyCode);
-		try {
-			return accountService.transfer(id1, id2, money);
-		} catch (NotEnoughMoneyException | DifferentCurrencyException e) {
-			throw new WebApplicationException(e, Response.Status.PRECONDITION_FAILED);
-		}
+		return accountService.transfer(id1, id2, toMoney(amount, currencyCode));
 	}
 
 	private Money toMoney(BigDecimal amount, String currencyCode) {
 		if (amount == null || amount.signum() <= 0 || currencyCode == null) {
 			throw new WebApplicationException(Response.Status.BAD_REQUEST);
 		}
-		final Currency currency = Currency.getInstance(currencyCode);
-		try {
-			return new Money(amount, currency);
-		} catch (MoneyFormatException e) {
-			throw new WebApplicationException(Response.Status.BAD_REQUEST);
-		}
+		return new Money(amount, Currency.getInstance(currencyCode));
 	}
 }

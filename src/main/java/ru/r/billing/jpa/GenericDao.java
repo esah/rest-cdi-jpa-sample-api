@@ -6,6 +6,7 @@ import javax.inject.Singleton;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import org.apache.deltaspike.jpa.api.transaction.Transactional;
+import ru.r.billing.ex.NotFoundException;
 
 @Singleton
 public class GenericDao {
@@ -17,6 +18,15 @@ public class GenericDao {
 
 	public <T> T find(Class<T> entityClass, Serializable id) {
 		return em.find(entityClass, id);
+	}
+
+	public <T> T load(Class<T> entityClass, Serializable id) {
+		final T result = em.find(entityClass, id);
+		if (result == null) {
+			throw new NotFoundException(
+					String.format("%s %s", entityClass.getSimpleName(), id));
+		}
+		return result;
 	}
 
 	@Transactional

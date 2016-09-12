@@ -18,40 +18,26 @@ public class AccountService {
 	private GenericDao genericDao;
 
 	public Account getAccountWithHistory(long id) {
-		final Account account = genericDao.find(Account.class, id);
-		if (account == null) {
-			throw new EntityNotFoundException("Account " + id);
-		}
+		Account account = genericDao.load(Account.class, id);
 		account.getHistory();
 		return account;
 	}
 
 	public Operation withdraw(long id, Money money) throws NotEnoughMoneyException {
-		final Account account = genericDao.find(Account.class, id);
-		if (account == null) {
-			throw new EntityNotFoundException("Account " + id);
-		}
+		Account account = genericDao.load(Account.class, id);
 		return account.withdraw(money);
 	}
 
 	public Operation deposit(long id, Money money) {
-		final Account account = genericDao.find(Account.class, id);
-		if (account == null) {
-			throw new EntityNotFoundException("Account " + id);
-		}
+		Account account = genericDao.load(Account.class, id);
 		return account.deposit(money);
 	}
 
 	public Collection<Operation> transfer(long id, long id2, Money money)
 			throws NotEnoughMoneyException {
-		final Account account1 = genericDao.find(Account.class, id);
-		if (account1 == null) {
-			throw new EntityNotFoundException("Account " + id);
-		}
-		final Account account2 = genericDao.find(Account.class, id2);
-		if (account2 == null) {
-			throw new EntityNotFoundException("Account " + id2);
-		}
+		Account account1 = genericDao.load(Account.class, id);
+		Account account2 = genericDao.load(Account.class, id2);
+
 		return account1.transfer(account2, money);
 	}
 }
