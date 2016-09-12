@@ -18,6 +18,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
@@ -40,6 +41,10 @@ public class Operation {
 	@Column(name = "id")
 	@XmlTransient
 	private Long id;
+
+	@Column(name = "account_id", insertable = false, updatable = false)
+	@XmlElement(name = "account_id")
+	private Long accountId;
 
 	@ManyToOne(optional = false, fetch = FetchType.LAZY)
 	@JoinColumn(name = "account_id")
@@ -73,6 +78,7 @@ public class Operation {
 	public Operation(Account account, Money amount, Type type, Money balance,
 			ZonedDateTime time) {
 		this.account = account;
+		this.accountId = account.getNumber();
 		this.amount = amount;
 		this.type = type;
 		this.balance = balance;
