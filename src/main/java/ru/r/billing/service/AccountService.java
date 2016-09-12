@@ -1,13 +1,11 @@
 package ru.r.billing.service;
 
-import java.math.BigDecimal;
 import java.util.Collection;
-import java.util.Currency;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.persistence.EntityNotFoundException;
 import org.apache.deltaspike.jpa.api.transaction.Transactional;
-import ru.r.billing.api.BillingWeb;
+import ru.r.billing.ex.NotEnoughMoneyException;
 import ru.r.billing.jpa.GenericDao;
 import ru.r.billing.model.Account;
 import ru.r.billing.model.Money;
@@ -28,7 +26,7 @@ public class AccountService {
 		return account;
 	}
 
-	public Operation withdraw(long id, Money money) {
+	public Operation withdraw(long id, Money money) throws NotEnoughMoneyException {
 		final Account account = genericDao.find(Account.class, id);
 		if (account == null) {
 			throw new EntityNotFoundException("Account " + id);
@@ -44,7 +42,8 @@ public class AccountService {
 		return account.deposit(money);
 	}
 
-	public Collection<Operation> transfer(long id, long id2, Money money) {
+	public Collection<Operation> transfer(long id, long id2, Money money)
+			throws NotEnoughMoneyException {
 		final Account account1 = genericDao.find(Account.class, id);
 		if (account1 == null) {
 			throw new EntityNotFoundException("Account " + id);

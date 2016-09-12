@@ -58,13 +58,13 @@ public class Account {
 		this.balance = new Money(BigDecimal.ZERO, c);
 	}
 
-	private void hasEnough(Money money) {
+	private void hasEnough(Money money) throws NotEnoughMoneyException {
 		if (balance.isLess(money)) {
 			throw new NotEnoughMoneyException();
 		}
 	}
 
-	public Collection<Operation> transfer(Account to, Money amount) {
+	public Collection<Operation> transfer(Account to, Money amount) throws NotEnoughMoneyException {
 		Operation op1 = withdraw(amount);
 		Operation op2 = to.deposit(amount);
 		history.add(op1);
@@ -79,7 +79,7 @@ public class Account {
 		return debit;
 	}
 
-	public Operation withdraw(Money amount) {
+	public Operation withdraw(Money amount) throws NotEnoughMoneyException {
 		hasEnough(amount);
 		balance = balance.subtract(amount);
 		final Operation credit = Operation.credit(this, amount);

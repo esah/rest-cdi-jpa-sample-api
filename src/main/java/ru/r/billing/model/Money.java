@@ -10,6 +10,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import ru.r.billing.ex.DifferentCurrencyException;
+import ru.r.billing.ex.MoneyFormatException;
 import ru.r.billing.jaxb.CurrencyXmlAdapter;
 
 /**
@@ -30,7 +31,10 @@ public class Money implements Comparable<Money>, Serializable {
 	private Money() {
 	}
 
-	public Money(BigDecimal amount, Currency currency) {
+	public Money(BigDecimal amount, Currency currency) throws MoneyFormatException {
+		if (amount == null || amount.signum() < 0 || amount.scale() > 2 || currency == null) {
+			throw new MoneyFormatException();
+		}
 		this.amount = amount;
 		this.currency = currency;
 	}
@@ -53,7 +57,7 @@ public class Money implements Comparable<Money>, Serializable {
 		return of(amount.subtract(money.getAmount()));
 	}
 
-	private Money of(BigDecimal newAmount) {
+	private Money of(BigDecimal newAmount) throws MoneyFormatException {
 		return new Money(newAmount, currency);
 	}
 

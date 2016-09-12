@@ -18,6 +18,9 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import ru.r.billing.ex.DifferentCurrencyException;
+import ru.r.billing.ex.MoneyFormatException;
+import ru.r.billing.ex.NotEnoughMoneyException;
 import ru.r.billing.jpa.GenericDao;
 import ru.r.billing.model.Account;
 import ru.r.billing.model.Money;
@@ -49,10 +52,8 @@ public class BillingWeb {
 		if (genericDao.find(Account.class, id) != null) {
 			throw new WebApplicationException(Response.Status.CONFLICT);
 		}
-
 		final Currency currency = Currency.getInstance(currencyCode);
-		final Account account = genericDao.saveOrUpdate(new Account(id, currency));
-		return account;
+		return genericDao.saveOrUpdate(new Account(id, currency));
 	}
 
 	@PUT
@@ -63,7 +64,11 @@ public class BillingWeb {
 			@PathParam("currency") String currencyCode) {
 
 		final Money money = toMoney(amount, currencyCode);
-		return accountService.deposit(id, money);
+		try {
+			return accountService.deposit(id, money);
+		} catch (DifferentCurrencyException e) {
+			throw new WebApplicationException(e, Response.Status.PRECONDITION_FAILED);
+		}
 	}
 
 	@DELETE
@@ -74,7 +79,11 @@ public class BillingWeb {
 			@PathParam("currency") String currencyCode) {
 
 		final Money money = toMoney(amount, currencyCode);
-		return accountService.withdraw(id, money);
+		try {
+			return accountService.withdraw(id, money);
+		} catch (NotEnoughMoneyException | DifferentCurrencyException e) {
+			throw new WebApplicationException(e, Response.Status.PRECONDITION_FAILED);
+		}
 	}
 
 	@POST
@@ -86,11 +95,22 @@ public class BillingWeb {
 			@QueryParam("currency") String currencyCode) {
 
 		final Money money = toMoney(amount, currencyCode);
-		return accountService.transfer(id1, id2, money);
+		try {
+			return accountService.transfer(id1, id2, money);
+		} catch (NotEnoughMoneyException | DifferentCurrencyException e) {
+			throw new WebApplicationException(e, Response.Status.PRECONDITION_FAILED);
+		}
 	}
 
 	private Money toMoney(BigDecimal amount, String currencyCode) {
+		if (amount == null || amount.signum() <= 0 || currencyCode == null) {
+			throw new WebApplicationException(Response.Status.BAD_REQUEST);
+		}
 		final Currency currency = Currency.getInstance(currencyCode);
-		return new Money(amount, currency);
+		try {
+			return new Money(amount, currency);
+		} catch (MoneyFormatException e) {
+			throw new WebApplicationException(Response.Status.BAD_REQUEST);
+		}
 	}
 }
